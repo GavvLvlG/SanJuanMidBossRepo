@@ -1,6 +1,7 @@
 using System.Linq;
 using TMPro;
 using UnityEngine;
+using System;
 
 public class BirbGameManager : MonoBehaviour
 {
@@ -11,14 +12,17 @@ public class BirbGameManager : MonoBehaviour
     private float rateOfSpawn = 3.0f;
     public Transform[] posRefArray;
 
-    public TMP_Text scoreText;
-    private int score = 0;
+    public TextMeshProUGUI timerText;
+    private float currentTime;
+    private bool timerActive = false;
+    public float startTime = 60f;
 
     public GameObject gameOverScreen;
 
     private void Start()
     {
-        UpdateScoreText();
+        currentTime = startTime;
+        timerActive = true;
     }
 
     private void Update()
@@ -28,30 +32,43 @@ public class BirbGameManager : MonoBehaviour
             return;
         }
 
+        if (timerActive)
+        {
+            if (currentTime > 0)
+            {
+                currentTime -= Time.deltaTime;
+                UpdateTimerDisplay(currentTime);
+            }
+            else
+            {
+                timerActive = false;
+                currentTime = 0;
+                // Add "Game Over" logic here or trigger an event
+                Debug.Log("Timer finished!");
+            }
+        }
         spawnerTimer += Time.deltaTime;
 
-        if(spawnerTimer >= rateOfSpawn)
+        if (spawnerTimer >= rateOfSpawn)
         {
             SpawnWood();
             spawnerTimer = 0;
         }
     }
 
-
     private void SpawnWood()
     {
-        int randomPosIdx = Random.Range(0, posRefArray.Length);
+        int randomPosIdx = UnityEngine.Random.Range(0, posRefArray.Length); // Explicitly using UnityEngine.Random
         Instantiate(woodPrefab, posRefArray[randomPosIdx].position, Quaternion.identity);
     }
 
-    public void AddScore()
+    private void UpdateTimerDisplay(float timeInSeconds)
     {
-        score++;
-        UpdateScoreText();
-    }
-    private void UpdateScoreText()
-    {
-        scoreText.text = score.ToString();
+        // Use TimeSpan to easily format minutes and seconds
+        TimeSpan t = TimeSpan.FromSeconds(timeInSeconds);
+        string timeString = string.Format("{0:00}:{1:00}", t.Minutes, t.Seconds);
+
+        timerText.text = timeString;
     }
 
     public void EnableGameOver()
@@ -59,5 +76,4 @@ public class BirbGameManager : MonoBehaviour
         gameOverScreen.SetActive(true);
         isGameOver = true;
     }
-
 }

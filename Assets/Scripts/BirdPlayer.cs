@@ -30,9 +30,5 @@ public class BirdPlayer : MonoBehaviour
             gameManager.EnableGameOver();
             Destroy(gameObject);
         }
-        if (collision.tag == "Goal")
-        {
-            gameManager.AddScore();
-        }
     }
 }
