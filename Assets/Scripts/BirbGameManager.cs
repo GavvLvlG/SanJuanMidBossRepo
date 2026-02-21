@@ -13,6 +13,7 @@ public class BirbGameManager : MonoBehaviour
     public Transform[] posRefArray;
 
     public TextMeshProUGUI timerText;
+    public GameOverManager gameOverManager;
     private float currentTime;
     private bool timerActive = false;
     public float startTime = 60f;
@@ -43,8 +44,8 @@ public class BirbGameManager : MonoBehaviour
             {
                 timerActive = false;
                 currentTime = 0;
-                // Add "Game Over" logic here or trigger an event
-                Debug.Log("Timer finished!");
+                gameOverScreen.SetActive(true);
+                isGameOver = true;
             }
         }
         spawnerTimer += Time.deltaTime;
